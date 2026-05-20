@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Lakhdari Workspace v3.0 — Ilyes Lakhdari</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Fonts: Latin + Arabic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Firebase SDK (compat) — safe to load even before config is set -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+  <div class="mobile-sidebar-overlay" id="mobile-sidebar-overlay"></div>
+  <!-- ═══════════════════════════════════════════
+       SIDEBAR NAVIGATION
+  ════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Avatar + Admin Badge -->
+    <div class="sidebar-header">
+      <div class="avatar-ring" id="avatar-ring" title="Long-press for admin access">
+        <div class="avatar">IL</div>
+      </div>
+      <div class="sidebar-identity">
+        <span class="sidebar-name">Ilyes Lakhdari</span>
+        <span class="sidebar-title">Flutter Dev · AI Enthusiast</span>
+      </div>
+      <!-- Admin badge — hidden until authenticated -->
+      <div class="admin-badge" id="admin-badge" style="display:none">
+        <span class="admin-dot"></span>
+        <span id="admin-badge-text">Admin Mode</span>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-view="home">
+        <span class="nav-icon">⌂</span>
+        <span>Workspace</span>
+      </button>
+      <button class="nav-btn" data-view="projects">
+        <span class="nav-icon">◈</span>
+        <span>Projects</span>
+      </button>
+      <button class="nav-btn" data-view="ai">
+        <span class="nav-icon">◎</span>
+        <span>Mini-Ilyes AI</span>
+      </button>
+      <button class="nav-btn" data-view="workbench">
+        <span class="nav-icon">⚙</span>
+        <span>Workbench</span>
+      </button>
+      <button class="nav-btn" data-view="gaming">
+        <span class="nav-icon">▶</span>
+        <span>Hardware &amp; Gaming</span>
+      </button>
+      <button class="nav-btn" data-view="cv">
+        <span class="nav-icon">↓</span>
+        <span>Download CV</span>
+      </button>
+      <button class="nav-btn canary-btn" data-view="canary">
+        <span class="nav-icon">🐤</span>
+        <span>Canary Room</span>
+        <span class="easter-badge">?</span>
+      </button>
+      <button class="nav-btn" data-view="contact">
+        <span class="nav-icon">✉</span>
+        <span>Contact</span>
+      </button>
+
+      <!-- Studio — hidden until admin login -->
+      <div class="sidebar-divider"></div>
+      <button class="nav-btn studio-nav-btn" data-view="studio" style="display:none">
+        <span class="nav-icon">🎛</span>
+        <span>Lakhdari Studio</span>
+        <span class="studio-badge">ADMIN</span>
+      </button>
+    </nav>
+
+    <!-- Footer: social links + lang toggle + logout -->
+    <div class="sidebar-footer">
+      <a href="#" class="social-link" id="github-link">GitHub</a>
+      <a href="#" class="social-link" id="linkedin-link">LinkedIn</a>
+      <button class="lang-toggle-btn" id="lang-toggle-btn" title="التبديل إلى العربية">عر</button>
+      <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle dark/light mode">☀</button>
+      <button class="admin-logout-btn" id="admin-logout-btn" style="display:none" title="Logout">⏻</button>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN WORKSPACE
+  ════════════════════════════════════════════ -->
+  <main class="workspace" id="workspace">
+
+    <!-- ─── HOME VIEW ─────────────────────────── -->
+    <section class="view active" id="view-home">
+      <div class="home-grid">
+        <div class="home-hero">
+          <span class="home-badge">v3.0 · Batna 2 University</span>
+          <h1 class="home-title">The Lakhdari<br/><em>Workspace</em></h1>
+          <p class="home-subtitle">Full-stack developer crafting cross-platform apps, AI-powered tools, and hardware experiments from Constantine, Algeria.</p>
+          <div class="home-cta-row">
+            <button class="cta-primary" data-view="projects">Explore Projects</button>
+            <button class="cta-secondary" data-view="ai">Talk to Mini-Ilyes</button>
+          </div>
+        </div>
+        <div class="home-stats">
+          <div class="stat-card">
+            <span class="stat-num" id="stat-live-projects">3</span>
+            <span class="stat-label">Live Projects</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">5+</span>
+            <span class="stat-label">Tech Stacks</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">4</span>
+            <span class="stat-label">Games Optimized</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">∞</span>
+            <span class="stat-label">Canary Chicks</span>
+          </div>
+        </div>
+        <div class="home-tech-strip">
+          <span>Flutter</span><span>Firebase</span><span>Python</span>
+          <span>HTML/CSS/JS</span><span>Ollama</span><span>Llama 3</span><span>Linux</span>
+        </div>
+
+        <!-- ── SKILLS SECTION (NEW) ── -->
+        <div class="skills-section">
+          <h3 class="skills-title" id="skills-section-title">Skills & Proficiency</h3>
+          <div class="skills-grid" id="skills-grid">
+            <div class="skill-item"><span class="skill-name">Flutter / Dart</span><div class="skill-bar"><div class="skill-fill" data-pct="92"></div></div><span class="skill-pct">92%</span></div>
+            <div class="skill-item"><span class="skill-name">Firebase / Firestore</span><div class="skill-bar"><div class="skill-fill" data-pct="88"></div></div><span class="skill-pct">88%</span></div>
+            <div class="skill-item"><span class="skill-name">JavaScript / Node.js</span><div class="skill-bar"><div class="skill-fill" data-pct="82"></div></div><span class="skill-pct">82%</span></div>
+            <div class="skill-item"><span class="skill-name">Python</span><div class="skill-bar"><div class="skill-fill" data-pct="75"></div></div><span class="skill-pct">75%</span></div>
+            <div class="skill-item"><span class="skill-name">AI / LLM Integration</span><div class="skill-bar"><div class="skill-fill" data-pct="85"></div></div><span class="skill-pct">85%</span></div>
+            <div class="skill-item"><span class="skill-name">Linux / Performance</span><div class="skill-bar"><div class="skill-fill" data-pct="80"></div></div><span class="skill-pct">80%</span></div>
+          </div>
+        </div>
+
+        <!-- ── TIMELINE SECTION (NEW) ── -->
+        <div class="timeline-section">
+          <h3 class="timeline-title" id="timeline-section-title">My Journey</h3>
+          <div class="timeline" id="timeline">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <span class="tl-year">2020</span>
+                <h4 class="tl-event" data-lang-key="tl_2020">Started Computer Science at Batna 2 University</h4>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <span class="tl-year">2022</span>
+                <h4 class="tl-event" data-lang-key="tl_2022">Built Anime Beast — first full-stack web platform</h4>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <span class="tl-year">2023</span>
+                <h4 class="tl-event" data-lang-key="tl_2023">Launched CareerCraft — 3,100+ PDF exports</h4>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot tl-dot-highlight"></div>
+              <div class="tl-content">
+                <span class="tl-year">2024</span>
+                <h4 class="tl-event" data-lang-key="tl_2024">Graduated · Healthmate as final project · 2,400+ installs</h4>
+              </div>
+            </div>
+            <div class="tl-item tl-future">
+              <div class="tl-dot tl-dot-future"></div>
+              <div class="tl-content">
+                <span class="tl-year">Now</span>
+                <h4 class="tl-event" data-lang-key="tl_now">Building locally, thinking globally 🚀</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── VISITOR COUNTER (NEW) ── -->
+        <div class="visitor-strip" id="visitor-strip">
+          <span class="visitor-icon">👁</span>
+          <span id="visitor-label">You are visitor</span>
+          <span class="visitor-count" id="visitor-count">—</span>
+          <span id="visitor-label-2">to this workspace</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ─── PROJECTS VIEW ─────────────────────── -->
+    <section class="view" id="view-projects">
+      <div class="view-header">
+        <h2>App Store Canvas</h2>
+        <div class="filter-row">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="flutter">Flutter</button>
+          <button class="filter-btn" data-filter="web">Web</button>
+        </div>
+      </div>
+      <div class="projects-grid" id="projects-grid"></div>
+    </section>
+
+    <!-- ─── AI VIEW ───────────────────────────── -->
+    <section class="view" id="view-ai">
+      <div class="view-header">
+        <h2>Mini-Ilyes AI</h2>
+        <span class="ai-status"><span class="status-dot"></span>Powered by Claude</span>
+      </div>
+      <div class="ai-container">
+        <div class="ai-intro">
+          <p>Ask me anything about Ilyes — his projects, studies at Batna 2, tech stack, or thoughts on AI and hardware hacking.</p>
+        </div>
+        <div class="chat-window" id="chat-window">
+          <div class="chat-msg assistant">
+            <div class="msg-avatar">IL</div>
+            <div class="msg-bubble">Hey! I'm Mini-Ilyes — a digital reflection of Ilyes Lakhdari. Ask me about my projects, my Flutter apps, my ThinkPad setup, or anything else you're curious about.</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Ask Mini-Ilyes anything..." autocomplete="off" />
+          <button id="chat-send">↑</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── WORKBENCH VIEW ────────────────────── -->
+    <section class="view" id="view-workbench">
+      <div class="view-header">
+        <h2>The Workbench</h2>
+        <span class="section-tag">Hardware · Electronics · Hacking</span>
+      </div>
+      <div class="workbench-grid">
+        <div class="bench-card">
+          <div class="bench-icon">💿</div>
+          <h3>CD/DVD Drive Recycling</h3>
+          <p>Repurposing optical drives for stepper motor experiments — salvaging the laser assembly and carriage mechanism for precision movement projects.</p>
+          <div class="bench-tags"><span>Stepper Motors</span><span>Recycling</span><span>Electronics</span></div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-icon">📱</div>
+          <h3>scrcpy Android Control</h3>
+          <p>Full USB/WiFi Android device mirroring &amp; control via scrcpy — zero latency screen casting with custom ADB scripts for dev testing workflows.</p>
+          <div class="bench-tags"><span>ADB</span><span>scrcpy</span><span>Android</span></div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-icon">🤖</div>
+          <h3>Local LLM Setup</h3>
+          <p>Running Llama 3 locally via Ollama on the ThinkPad. Custom model configs, quantization tuning, and local inference pipelines without cloud dependency.</p>
+          <div class="bench-tags"><span>Ollama</span><span>Llama 3</span><span>Local AI</span></div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-icon">⚡</div>
+          <h3>System Optimization</h3>
+          <p>Deep Linux performance tuning — CPU governor scripts, thermal management, swap optimization, and boot time reduction from cold start analysis.</p>
+          <div class="bench-tags"><span>Linux</span><span>CPU Governors</span><span>Performance</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── GAMING VIEW ───────────────────────── -->
+    <section class="view" id="view-gaming">
+      <div class="view-header">
+        <h2>Hardware &amp; Gaming</h2>
+        <span class="section-tag">iGPU · Optimized · Real Benchmarks</span>
+      </div>
+      <div class="gaming-layout">
+        <div class="machine-card">
+          <div class="machine-label">Daily Driver</div>
+          <div class="machine-name">ThinkPad L14 Gen 2</div>
+          <div class="specs-list">
+            <div class="spec-row"><span class="spec-k">CPU</span><span class="spec-v">AMD Ryzen 5 PRO 5650U</span></div>
+            <div class="spec-row"><span class="spec-k">RAM</span><span class="spec-v">16 GB DDR4</span></div>
+            <div class="spec-row"><span class="spec-k">GPU</span><span class="spec-v">Radeon RX Vega 7 iGPU</span></div>
+            <div class="spec-row"><span class="spec-k">OS</span><span class="spec-v">Linux / Windows dual boot</span></div>
+          </div>
+        </div>
+        <div class="games-grid">
+          <div class="game-card">
+            <div class="game-art ghost-art"></div>
+            <div class="game-info">
+              <span class="game-title">Ghost of Tsushima</span>
+              <div class="perf-bar"><div class="perf-fill" style="width:75%"></div></div>
+              <span class="perf-label">~45 FPS · Medium</span>
+            </div>
+          </div>
+          <div class="game-card">
+            <div class="game-art gta-art"></div>
+            <div class="game-info">
+              <span class="game-title">GTA V</span>
+              <div class="perf-bar"><div class="perf-fill" style="width:100%"></div></div>
+              <span class="perf-label">~60 FPS · High (tuned)</span>
+            </div>
+          </div>
+          <div class="game-card">
+            <div class="game-art re4-art"></div>
+            <div class="game-info">
+              <span class="game-title">RE4 Remake</span>
+              <div class="perf-bar"><div class="perf-fill" style="width:67%"></div></div>
+              <span class="perf-label">~40 FPS (patched)</span>
+            </div>
+          </div>
+          <div class="game-card">
+            <div class="game-art ef-art"></div>
+            <div class="game-info">
+              <span class="game-title">eFootball</span>
+              <div class="perf-bar"><div class="perf-fill" style="width:100%"></div></div>
+              <span class="perf-label">~60 FPS · Ultra</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── CV VIEW ───────────────────────────── -->
+    <section class="view" id="view-cv">
+      <div class="view-header">
+        <h2>Download CV</h2>
+        <span class="section-tag">Generated by CareerCraft</span>
+      </div>
+      <div class="cv-container">
+        <div class="cv-preview">
+          <div class="cv-mock">
+            <div class="cv-mock-header">
+              <div class="cv-mock-name">Ilyes Lakhdari</div>
+              <div class="cv-mock-role">Flutter Developer · AI Engineer</div>
+            </div>
+            <div class="cv-mock-section">
+              <div class="cv-mock-line long"></div>
+              <div class="cv-mock-line medium"></div>
+              <div class="cv-mock-line short"></div>
+            </div>
+            <div class="cv-mock-section">
+              <div class="cv-mock-line long"></div>
+              <div class="cv-mock-line medium"></div>
+            </div>
+            <div class="cv-mock-chips">
+              <span>Flutter</span><span>Firebase</span><span>Python</span><span>AI/ML</span>
+            </div>
+          </div>
+        </div>
+        <div class="cv-actions">
+          <h3>Ready to Download</h3>
+          <p>Your latest CV, generated on-the-fly from the CareerCraft engine — includes all current projects, skills, and hardware setup.</p>
+          <button class="cv-download-btn" id="cv-download">
+            <span class="cv-btn-icon">↓</span>
+            Download CV
+          </button>
+          <div class="cv-loading" id="cv-loading">
+            <span class="cv-loading-text">Connecting to CareerCraft...</span>
+            <div class="cv-progress-bar"><div class="cv-progress-fill" id="cv-progress"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── CANARY EASTER EGG VIEW ────────────── -->
+    <section class="view" id="view-canary">
+      <div class="canary-room">
+        <div class="canary-header">
+          <span class="canary-label">🐤 The Canary Room</span>
+          <h2>A Little Corner of Joy</h2>
+        </div>
+        <div class="canary-content">
+          <div class="cage-visual">
+            <div class="cage-bars">
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+              <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+            <div class="cage-interior">
+              <div class="canary-bird" id="canary1">🐦</div>
+              <div class="canary-chick" id="chick1">🐣</div>
+              <div class="canary-chick" id="chick2">🐤</div>
+              <div class="canary-chick" id="chick3">🐤</div>
+              <div class="perch"></div>
+            </div>
+          </div>
+          <div class="canary-text">
+            <p>Beyond the code and circuits, there's a quieter passion — raising canaries and watching new chicks hatch and grow.</p>
+            <p>Every tiny chirp is a reminder that the best systems aren't always digital.</p>
+            <div class="canary-stats">
+              <div class="c-stat"><span>🥚</span><span>New chicks this season</span></div>
+              <div class="c-stat"><span>🎵</span><span>Morning songs, every day</span></div>
+              <div class="c-stat"><span>❤️</span><span>Pure joy, no exceptions</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── LAKHDARI STUDIO VIEW ──────────────── -->
+    <section class="view" id="view-studio">
+      <div class="view-header">
+        <h2>🎛 Lakhdari Studio</h2>
+        <span class="section-tag studio-section-tag">Developer Control Panel</span>
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="studio-stats-row" id="studio-stats-row"></div>
+
+      <!-- Project Form -->
+      <div class="studio-panel" id="studio-form-section">
+        <h3 class="studio-panel-title" id="studio-form-title">Add New Project</h3>
+        <form class="studio-form" id="studio-project-form" autocomplete="off">
+          <div class="sf-row">
+            <div class="sf-field">
+              <label>Project Name *</label>
+              <input type="text" id="sf-name" name="sf-name" placeholder="e.g. Healthmate" required />
+            </div>
+            <div class="sf-field sf-field-sm">
+              <label>Icon / Emoji *</label>
+              <input type="text" id="sf-icon" name="sf-icon" placeholder="♥" />
+            </div>
+            <div class="sf-field sf-field-sm">
+              <label>Icon Color Class</label>
+              <select id="sf-icon-class" name="sf-icon-class">
+                <option value="hm-icon">Red (hm)</option>
+                <option value="ab-icon">Purple (ab)</option>
+                <option value="cc-icon">Blue (cc)</option>
+                <option value="green-icon">Green</option>
+                <option value="orange-icon">Orange</option>
+              </select>
+            </div>
+            <div class="sf-field sf-field-sm">
+              <label>Category</label>
+              <select id="sf-category" name="sf-category">
+                <option value="flutter">Flutter</option>
+                <option value="web">Web</option>
+                <option value="ai">AI</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field sf-field-wide">
+              <label>Tagline</label>
+              <input type="text" id="sf-tagline" name="sf-tagline" placeholder="e.g. Graduation Project · Batna 2 University" />
+            </div>
+            <div class="sf-field sf-field-sm">
+              <label>Stars (1–5)</label>
+              <input type="number" id="sf-stars" name="sf-stars" min="1" max="5" value="5" />
+            </div>
+            <div class="sf-field sf-field-sm">
+              <label>Downloads Label</label>
+              <input type="text" id="sf-downloads" name="sf-downloads" placeholder="2.4k installs" />
+            </div>
+          </div>
+          <div class="sf-field">
+            <label>Short Description (card)</label>
+            <input type="text" id="sf-short-desc" name="sf-short-desc" placeholder="One-line description shown on the card" />
+          </div>
+          <div class="sf-field">
+            <label>Full Description (modal)</label>
+            <textarea id="sf-desc" name="sf-desc" rows="3" placeholder="Detailed description for the modal popup"></textarea>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field">
+              <label>Tech Stack (comma-separated)</label>
+              <input type="text" id="sf-tech" name="sf-tech" placeholder="Flutter, Firebase, Gemini API" />
+            </div>
+          </div>
+          <div class="sf-field">
+            <label>Highlights (one per line)</label>
+            <textarea id="sf-highlights" name="sf-highlights" rows="3" placeholder="AI-powered feature&#10;Cross-platform support&#10;Firebase sync"></textarea>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field">
+              <label>Download Link (APK / Store)</label>
+              <input type="url" id="sf-dl-link" name="sf-dl-link" placeholder="https://github.com/..." />
+            </div>
+            <div class="sf-field">
+              <label>Live Demo / Website Link</label>
+              <input type="url" id="sf-live-link" name="sf-live-link" placeholder="https://animebeast.com" />
+            </div>
+          </div>
+          <div class="sf-field">
+            <label>Screenshot Paths (one per line)</label>
+            <textarea id="sf-images" name="sf-images" rows="3" placeholder="assets/healthmate1.png&#10;assets/healthmate2.png"></textarea>
+            <span class="sf-hint">These appear in the image carousel inside the modal. Leave blank for auto-placeholder.</span>
+          </div>
+          <div class="sf-actions">
+            <button type="submit" class="studio-submit-btn" id="studio-submit-btn">Add Project</button>
+            <button type="button" class="studio-cancel-btn" id="studio-cancel-btn" style="display:none">Cancel Edit</button>
+            <button type="button" class="studio-reset-btn" id="studio-reset-btn">Reset to Defaults</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Projects List -->
+      <div class="studio-panel">
+        <h3 class="studio-panel-title">All Projects <span class="studio-panel-sub">⭐ set featured · ✎ edit · ✕ delete</span></h3>
+        <div id="studio-project-list"></div>
+      </div>
+
+      <!-- Analytics -->
+      <div class="studio-panel">
+        <h3 class="studio-panel-title">Download Analytics</h3>
+        <p class="studio-analytics-note">Click counts recorded each time a visitor presses download or live-demo.</p>
+        <div id="studio-analytics"></div>
+      </div>
+    </section>
+
+    <!-- ─── CONTACT VIEW (NEW) ─────────────────── -->
+    <section class="view" id="view-contact">
+      <div class="view-header">
+        <h2 id="contact-view-title">Get In Touch</h2>
+        <span class="section-tag" id="contact-view-tag">AI-Powered · Instant Reply</span>
+      </div>
+      <div class="contact-layout">
+        <div class="contact-info-panel">
+          <div class="contact-info-item">
+            <span class="contact-info-icon">📍</span>
+            <div><strong id="contact-location-label">Location</strong><span>Constantine, Algeria</span></div>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-info-icon">🎓</span>
+            <div><strong id="contact-edu-label">Education</strong><span>Batna 2 University — CS Licence</span></div>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-info-icon">💼</span>
+            <div><strong id="contact-avail-label">Availability</strong><span id="contact-avail-status" class="avail-open">Open to opportunities</span></div>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-info-icon">🤖</span>
+            <div><strong id="contact-ai-label">AI Reply</strong><span id="contact-ai-sub">Mini-Ilyes reads your message and responds</span></div>
+          </div>
+          <div class="contact-social-row">
+            <a href="#" class="contact-social-btn" id="contact-github">GitHub</a>
+            <a href="#" class="contact-social-btn" id="contact-linkedin">LinkedIn</a>
+          </div>
+        </div>
+        <div class="contact-form-panel">
+          <div class="contact-form-inner">
+            <div class="cf-field">
+              <label id="cf-name-label">Your Name</label>
+              <input type="text" id="cf-name" placeholder="e.g. Ahmed" autocomplete="off" />
+            </div>
+            <div class="cf-field">
+              <label id="cf-msg-label">Your Message</label>
+              <textarea id="cf-message" rows="4" placeholder="Hi Ilyes, I'd love to collaborate on..."></textarea>
+            </div>
+            <button class="cf-send-btn" id="cf-send-btn">
+              <span class="cf-send-icon">✉</span>
+              <span id="cf-send-label">Send Message</span>
+            </button>
+          </div>
+          <!-- AI Reply box -->
+          <div class="contact-reply-box" id="contact-reply-box" style="display:none">
+            <div class="reply-header">
+              <span class="reply-avatar">IL</span>
+              <span id="reply-from-label">Mini-Ilyes replied</span>
+            </div>
+            <p id="contact-reply-text"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- end workspace -->
+
+  <!-- ═══════════════════════════════════════════
+       PROJECT DETAIL MODAL
+  ════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="project-modal">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div class="modal-content" id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ADMIN LOGIN MODAL
+  ════════════════════════════════════════════ -->
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-modal" id="login-modal">
+      <div class="login-header">
+        <div class="login-modal-icon">🎛</div>
+        <h3 id="login-modal-title">Studio Access</h3>
+        <p id="login-modal-sub">Admin credentials required</p>
+      </div>
+      <form class="login-form" id="login-form" autocomplete="off">
+        <div class="lf-field">
+          <label id="login-email-label">Email</label>
+          <input type="email" id="login-email-input" placeholder="admin@example.com" autocomplete="off" />
+        </div>
+        <div class="lf-field">
+          <label id="login-pass-label">Password</label>
+          <input type="password" id="login-pass-input" placeholder="••••••••" />
+        </div>
+        <div class="login-error" id="login-error"></div>
+        <div class="login-actions">
+          <button type="submit" class="login-submit-btn" id="login-submit-btn">Login</button>
+          <button type="button" class="login-cancel-btn" id="login-cancel-btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       FLOATING AI BUTTON
+  ════════════════════════════════════════════ -->
+  <div class="floating-ai-wrapper" id="floating-ai-wrapper">
+    <div class="ai-speech-bubble" id="ai-speech-bubble">
+      <span id="ai-bubble-text">Got questions? I'm right here 👋</span>
+    </div>
+    <button class="floating-ai-btn" id="floating-ai-btn" title="Talk to Mini-Ilyes AI">
+      <span class="fab-icon">◎</span>
+      <span class="fab-pulse"></span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCRIPTS — ORDER MATTERS
+  ════════════════════════════════════════════ -->
+  <script src="projects-data.js"></script>
+  <script src="lang-config.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="ai.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
